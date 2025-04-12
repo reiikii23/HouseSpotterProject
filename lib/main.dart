@@ -1,6 +1,9 @@
+import 'package:app1/home.dart';
 import 'package:flutter/material.dart';
-import 'profile.dart';
 
 void main() {
-  runApp(Profile());
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Home(),
+  ));
 }
