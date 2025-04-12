@@ -1,0 +1,2 @@
+C:/Users/johnn/Desktop/softdes/android/app/.cxx/Debug/61243p4i/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/johnn/Desktop/softdes/android/app/.cxx/Debug/61243p4i/arm64-v8a/CMakeFiles/rebuild_cache.dir
