@@ -1,0 +1,2 @@
+C:/Users/johnn/Desktop/SOFTDES/flutter_fruits/flutter_app/android/app/.cxx/Debug/273w6t6n/x86/CMakeFiles/edit_cache.dir
+C:/Users/johnn/Desktop/SOFTDES/flutter_fruits/flutter_app/android/app/.cxx/Debug/273w6t6n/x86/CMakeFiles/rebuild_cache.dir

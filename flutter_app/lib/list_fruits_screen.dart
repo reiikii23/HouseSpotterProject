@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:app1/config.dart' as config;
+import 'package:app1/config/constants.dart' as config;
 
 import 'package:app1/models/fruit.dart';
 
