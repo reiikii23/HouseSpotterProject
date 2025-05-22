@@ -1,13 +1,22 @@
 from pydantic import BaseModel
-from typing import Optional
 
-class FruitCreate(BaseModel): 
-    name: str
-    seedless: bool = True
-    image_path: Optional[str] = None
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    full_name: str
+    phone: str
+    address: str
 
-class FruitOut(FruitCreate):
+class UserResponse(BaseModel):
     id: int
+    email: str
+    full_name: str
+    phone: str
+    address: str
 
     class Config:
         orm_mode = True
+
+class UserLogin(BaseModel):
+    email: str
+    password: str

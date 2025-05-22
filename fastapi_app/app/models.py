@@ -1,10 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String
 from .database import Base
 
-class Fruit(Base):
-    __tablename__ = "fruits"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    seedless = Column(Boolean, default=True)
-    image_path = Column(String(100), default=None)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    full_name = Column(String(255))
+    phone_number = Column(String(50))
+    address = Column(String(255))

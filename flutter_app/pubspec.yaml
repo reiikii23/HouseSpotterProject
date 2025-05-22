@@ -28,14 +28,21 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  shared_preferences: ^2.2.2
   flutter:
     sdk: flutter
+    
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  http: ^1.3.0
   google_fonts: ^6.2.0
+  http: ^1.3.0
+  font_awesome_flutter: ^10.6.0
+  image_picker: ^1.0.4
+  flutter_map: ^6.1.0
+  latlong2: 0.9.1
+  
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +69,21 @@ flutter:
   assets:
     - assets/icons/list.png
     - assets/icons/plus.png
+    - assets/logo.png
+    - assets/transi1.jpg
+    - assets/transi2.jpg
+    - assets/apt1.jpg
+    - assets/apt2.jpg
+    - assets/house1.jpg
+    - assets/house2.jpg
+    - assets/bedspace1.jpg
+    - assets/bedspace2.jpg
+    - assets/images/gcash.png
+    - assets/images/maya.png
+    - assets/images/BDO.png
+    - assets/images/mastercard.png
+    - assets/success.png
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
