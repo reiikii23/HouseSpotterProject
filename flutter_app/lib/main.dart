@@ -12,7 +12,7 @@ void main() {
     routes: {
       '/login': (context) => Home(),         
       '/signup': (context) => SignupScreen(), 
-      '/home': (context) => HomeScreen(),     
+      '/home': (context) => HomeScreen(user: {},),     
     },
   ));
 }

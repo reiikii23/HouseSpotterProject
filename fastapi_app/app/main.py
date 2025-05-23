@@ -1,11 +1,15 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from . import models, schemas, crud
+from passlib.context import CryptContext
+
+from . import models, schemas, crud, auth
 from .database import SessionLocal, engine, Base
+from .routers import user 
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_db():
     db = SessionLocal()
@@ -14,16 +18,47 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/signup", response_model=schemas.UserResponse)
-def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, user.email)
-    if db_user:
+@app.post("/register", response_model=schemas.UserOut)
+def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    print("📥 Received registration:", user.dict())
+    if db.query(models.User).filter(models.User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db, user)
 
-@app.post("/login", response_model=schemas.UserResponse)
-def login(data: schemas.UserCreate, db: Session = Depends(get_db)):
-    user = crud.authenticate_user(db, data.email, data.password)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return user
+    hashed_password = auth.get_password_hash(user.password)
+
+    new_user = models.User(
+        username=user.email,
+        email=user.email,
+        password=password,
+        full_name=user.full_name,
+        phone=user.phone,
+        address=user.address,
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+
+
+
+@app.post("/login")
+def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    
+    if not pwd_context.verify(user.password, db_user.password):
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+
+    return {
+        "id": db_user.id,
+        "email": db_user.email,
+        "full_name": db_user.full_name,
+        "phone": db_user.phone,
+        "address": db_user.address
+    }
+
+app.include_router(user.router, prefix="/api", tags=["Users"])
+app.include_router(auth.router, prefix="/api", tags=["Auth"])

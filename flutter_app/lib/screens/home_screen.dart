@@ -6,8 +6,12 @@ import 'listing_screen1.dart';
 import 'property_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Map<String, dynamic> user;
+
+  const HomeScreen({super.key, required this.user});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -96,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onSelected: (_) {
                     setState(() {
                       selectedCategory = category;
-                      searchText = ''; // Clear search when changing category
+                      searchText = '';
                     });
                   },
                   selectedColor: Colors.black,
@@ -189,61 +193,57 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget buildMapContent() {
-  return Stack(
-    children: [
-      SizedBox.expand(
-        child: FlutterMap(
-          mapController: _mapController,
-          options: MapOptions(
-            center: LatLng(14.5995, 120.9842), // Manila
-            zoom: 13.0,
+    return Stack(
+      children: [
+        SizedBox.expand(
+          child: FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              center: LatLng(14.5995, 120.9842),
+              zoom: 13.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.app1',
+              ),
+            ],
           ),
-          children: [
-            TileLayer(
-              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              subdomains: ['a', 'b', 'c'],
-              userAgentPackageName: 'com.example.app1',
-            ),
-          ],
         ),
-      ),
-      Positioned(
-        top: 16,
-        right: 16,
-        child: Column(
-          children: [
-            FloatingActionButton(
-              heroTag: 'zoomIn',
-              mini: true,
-              backgroundColor: Colors.black,
-              onPressed: () {
-                final zoom = _mapController.zoom + 1;
-                _mapController.move(_mapController.center, zoom);
-              },
-              child: const Icon(Icons.add, color: Colors.white),
-            ),
-            const SizedBox(height: 8),
-            FloatingActionButton(
-              heroTag: 'zoomOut',
-              mini: true,
-              backgroundColor: Colors.black,
-              onPressed: () {
-                final zoom = _mapController.zoom - 1;
-                _mapController.move(_mapController.center, zoom);
-              },
-              child: const Icon(Icons.remove, color: Colors.white),
-            ),
-          ],
+        Positioned(
+          top: 16,
+          right: 16,
+          child: Column(
+            children: [
+              FloatingActionButton(
+                heroTag: 'zoomIn',
+                mini: true,
+                backgroundColor: Colors.black,
+                onPressed: () {
+                  final zoom = _mapController.zoom + 1;
+                  _mapController.move(_mapController.center, zoom);
+                },
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              FloatingActionButton(
+                heroTag: 'zoomOut',
+                mini: true,
+                backgroundColor: Colors.black,
+                onPressed: () {
+                  final zoom = _mapController.zoom - 1;
+                  _mapController.move(_mapController.center, zoom);
+                },
+                child: const Icon(Icons.remove, color: Colors.white),
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
-
-
-
+      ],
+    );
+  }
 
   Widget buildInboxContent() {
     return Stack(
@@ -282,8 +282,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const Spacer(),
           ],
         ),
-
-        // 👇 Support Floating Bubble
         Positioned(
           bottom: 20,
           right: 20,
@@ -342,17 +340,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget buildListingsContent() {
     if (!hasListings) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "No Listings",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
+            const Text("No Listings", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
@@ -421,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MenuScreen()),
+                MaterialPageRoute(builder: (context) => MenuScreen(user: widget.user)),
               );
             },
           ),

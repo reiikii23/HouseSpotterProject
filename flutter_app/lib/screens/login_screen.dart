@@ -1,10 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'home_screen.dart';
 import 'signup_screen.dart';
+import 'forgot_password_screen.dart';
 
-
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final String baseUrl = 'http://127.0.0.1:8000';
+
+  Future<void> login() async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': emailController.text,
+        'password': passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen(user: data)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login failed. Check credentials.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +50,9 @@ class Home extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo image
-              Image.asset(
-                'assets/logo.png', // Make sure this path is correct
-                height: 240,
-              ),
+              Image.asset('assets/logo.png', height: 240),
               const SizedBox(height: 48),
 
-              // Login form container
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -31,35 +61,27 @@ class Home extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Email
                     TextField(
+                      controller: emailController,
                       decoration: const InputDecoration(
-                        hintText: 'Email',
+                        labelText: 'Email',
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Password
                     TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                        hintText: 'Password',
+                        labelText: 'Password',
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Sign In button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => HomeScreen()),
-                          );
-                        },
+                        onPressed: login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
@@ -71,8 +93,6 @@ class Home extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    // Forgot password / Sign Up
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -83,14 +103,10 @@ class Home extends StatelessWidget {
                               MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
                             );
                           },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.black,
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
+                          child: const Text(
+                            'Forgot password?',
+                            style: TextStyle(color: Colors.black),
                           ),
-                          child: const Text('Forgot password?'),
                         ),
                         TextButton(
                           onPressed: () {
@@ -99,100 +115,31 @@ class Home extends StatelessWidget {
                               MaterialPageRoute(builder: (_) => SignupScreen()),
                             );
                           },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.black,
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(color: Colors.black),
                           ),
-                          child: const Text('Sign Up'),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // Footer text
               const Text.rich(
                 TextSpan(
                   text: 'Search, ',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
                   children: [
-                    TextSpan(
-                      text: 'compare, ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextSpan(
-                      text: 'and book ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    TextSpan(text: 'compare, ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: 'and book ', style: TextStyle(fontWeight: FontWeight.bold)),
                     TextSpan(text: 'in just few taps!'),
                   ],
                 ),
                 textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// ========== Forgot Password Screen ==========
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        title: const Text(
-          'Forgot Password',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Enter your email and we\'ll send you instructions to reset your password.',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 24),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Password reset link sent!')),
-                );
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Send Reset Link'),
-            ),
-          ],
         ),
       ),
     );

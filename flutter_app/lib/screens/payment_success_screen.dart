@@ -17,7 +17,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
               onPressed: () {
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => HomeScreen()), // import HomeScreen
+                  MaterialPageRoute(builder: (_) => HomeScreen(user: {},)), // import HomeScreen
                   (route) => false,
                 );
               },

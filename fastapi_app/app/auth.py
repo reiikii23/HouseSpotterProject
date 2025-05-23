@@ -13,13 +13,13 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
     if not db_user:
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
-    if not pwd_context.verify(user.password, db_user.hashed_password):
+    if not pwd_context.verify(user.password, db_user.password):
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
     return {
         "id": db_user.id,
         "email": db_user.email,
         "full_name": db_user.full_name,
-        "phone_number": db_user.phone_number,
+        "phone": db_user.phone,
         "address": db_user.address,
     }

@@ -4,9 +4,26 @@ import 'profile_screen.dart';
 import 'security_settings_screen.dart';
 import 'notification_screen.dart';
 import 'privacy_settings_screen.dart';
-import 'payment_method_screen.dart'; // <-- Add this import
+import 'payment_method_screen.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
+  final Map<String, dynamic> user;
+
+  const MenuScreen({super.key, required this.user});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  late Map<String, dynamic> user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = Map<String, dynamic>.from(widget.user);
+  }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -48,7 +65,7 @@ class MenuScreen extends StatelessWidget {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(); // Close dialog
+                        Navigator.of(context).pop();
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (_) => Home()),
@@ -101,7 +118,7 @@ class MenuScreen extends StatelessWidget {
           _buildSettingsCard(
             context,
             title: 'App Settings',
-            items: ['Notification Settings', 'Privacy Settings'], // "Language" removed
+            items: ['Notification Settings', 'Privacy Settings'],
           ),
           _buildSettingsCard(
             context,
@@ -140,17 +157,22 @@ class MenuScreen extends StatelessWidget {
               (item) => Column(
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (item == 'Profile') {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                          MaterialPageRoute(builder: (_) => ProfileScreen(user: user)),
                         );
                       } else if (item == 'Security Settings') {
-                        Navigator.push(
+                        final updatedUser = await Navigator.push<Map<String, dynamic>>(
                           context,
-                          MaterialPageRoute(builder: (_) => const SecuritySettingsScreen()),
+                          MaterialPageRoute(builder: (_) => SecuritySettingsScreen(user: user)),
                         );
+                        if (updatedUser != null) {
+                          setState(() {
+                            user.addAll(updatedUser);
+                          });
+                        }
                       } else if (item == 'Notification Settings') {
                         Navigator.push(
                           context,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final Map<String, dynamic> user;
+
+  const ProfileScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +30,16 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            _buildTextField(label: 'Name', hintText: 'John Doe'),
+            _buildTextField(label: 'Name', hintText: user['name'] ?? 'John Doe'),
             const SizedBox(height: 12),
 
-            _buildTextField(label: 'Username', hintText: 'john.doe123'),
+            _buildTextField(label: 'Username', hintText: user['username'] ?? 'john.doe123'),
             const SizedBox(height: 12),
 
-            _buildTextField(label: 'Email', hintText: 'johndoe@gmail.com'),
+            _buildTextField(label: 'Email', hintText: user['email'] ?? 'johndoe@gmail.com'),
             const SizedBox(height: 12),
 
-            _buildTextField(label: 'Bio', hintText: '', maxLines: 3),
+            _buildTextField(label: 'Bio', hintText: user['bio'] ?? '', maxLines: 3),
             const SizedBox(height: 20),
 
             const Text('Socials:', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -46,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
               children: const [
                 Icon(Icons.facebook, size: 32),
                 SizedBox(width: 16),
-                Icon(Icons.camera_alt, size: 32), // Instagram substitute
+                Icon(Icons.camera_alt, size: 32),
                 SizedBox(width: 16),
                 Icon(Icons.language, size: 32),
               ],
@@ -64,6 +66,7 @@ class ProfileScreen extends StatelessWidget {
         Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
         const SizedBox(height: 6),
         TextField(
+          enabled: false,
           maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hintText,

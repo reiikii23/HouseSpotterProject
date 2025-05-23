@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SecuritySettingsScreen extends StatefulWidget {
-  const SecuritySettingsScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic> user;
+
+  const SecuritySettingsScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   _SecuritySettingsScreenState createState() => _SecuritySettingsScreenState();
 }
 
 class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
-  final TextEditingController nameController = TextEditingController(text: "FirstName Surname");
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController(text: "********");
-  final TextEditingController emergencyController = TextEditingController();
-  final TextEditingController emailController = TextEditingController(text: "johndoe@gmail.com");
-  final TextEditingController addressController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController phoneController;
+  late TextEditingController passwordController;
+  late TextEditingController emergencyController;
+  late TextEditingController emailController;
+  late TextEditingController addressController;
 
   final Map<String, bool> editable = {
     "name": false,
@@ -25,13 +29,57 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.user['full_name'] ?? '');
+    phoneController = TextEditingController(text: widget.user['phone'] ?? '');
+    passwordController = TextEditingController(text: "********");
+    emergencyController = TextEditingController(text: widget.user['emergency'] ?? '');
+    emailController = TextEditingController(text: widget.user['email'] ?? '');
+    addressController = TextEditingController(text: widget.user['address'] ?? '');
+  }
+
+  Future<void> saveChanges() async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/users/${widget.user["id"]}');
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'full_name': nameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        'address': addressController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update: ${response.reasonPhrase}')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Security Settings'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            final updatedUser = {
+              'full_name': nameController.text,
+              'phone': phoneController.text,
+              'emergency': emergencyController.text,
+              'email': emailController.text,
+              'address': addressController.text,
+            };
+            Navigator.pop(context, updatedUser);
+          },
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -67,6 +115,9 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
               onTap: () {
                 setState(() {
                   editable[key] = !(editable[key] ?? false);
+                  if (!editable[key]!) {
+                    saveChanges(); // Call backend update when user clicks "Done"
+                  }
                 });
               },
               child: Text(
