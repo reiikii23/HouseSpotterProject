@@ -10,28 +10,28 @@ class PrivacySettingsScreen extends StatelessWidget {
         title: 'Request your personal data',
         subtitle: 'We\'ll create a file for you to download your personal data.',
         onTap: () {
-          // Navigate or show dialog
+          
         },
       ),
       _PrivacyOption(
         title: 'Delete your Account',
         subtitle: 'This will permanently delete your account and your data, in accordance with applicable law.',
         onTap: () {
-          // Navigate or confirm deletion
+          
         },
       ),
       _PrivacyOption(
         title: 'Sharing',
         subtitle: 'Decide how your profile and activity are shown to others.',
         onTap: () {
-          // Navigate to sharing settings
+          
         },
       ),
       _PrivacyOption(
         title: 'Services',
         subtitle: 'View and manage services that you\'ve connected to your account.',
         onTap: () {
-          // Navigate to connected services
+          
         },
       ),
     ];

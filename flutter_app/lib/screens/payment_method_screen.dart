@@ -67,7 +67,7 @@ class BankAccountsCardsPage extends StatelessWidget {
               const Divider(height: 20),
               InkWell(
                 onTap: () {
-                  // Handle Add button press here
+                  
                 },
                 child: Row(
                   children: [

@@ -116,7 +116,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
                 setState(() {
                   editable[key] = !(editable[key] ?? false);
                   if (!editable[key]!) {
-                    saveChanges(); // Call backend update when user clicks "Done"
+                    saveChanges(); 
                   }
                 });
               },

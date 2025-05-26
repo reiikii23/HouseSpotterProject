@@ -99,8 +99,8 @@ class _SetPriceScreenState extends State<SetPriceScreen> {
                 'price': price,
                 'image': selectedImage,
               });
-              Navigator.pop(context); // close dialog
-              Navigator.pop(context); // go back
+              Navigator.pop(context); 
+              Navigator.pop(context); 
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
             child: const Text("Add", style: TextStyle(color: Colors.white)),

@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: LatLng(14.5995, 120.9842), // Manila
+              center: LatLng(14.5995, 120.9842), 
               zoom: 13.0,
             ),
             children: [

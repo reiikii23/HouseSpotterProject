@@ -26,9 +26,9 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Future<void> deleteUserFromDatabase() async {
-    final userId = user['id']; // Ensure your user map includes an 'id' field
+    final userId = user['id']; 
     final response = await http.delete(
-      Uri.parse('http://10.0.2.2:8000/delete_user/$userId'), // Replace with your actual endpoint
+      Uri.parse('http://10.0.2.2:8000/delete_user/$userId'), 
     );
 
     if (response.statusCode == 200) {
