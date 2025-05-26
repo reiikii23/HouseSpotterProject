@@ -1,6 +1,6 @@
 class UserModel {
   String name;
-  String phone;
+  String phone_number;
   String password;
   String emergencyContact;
   String email;
@@ -8,7 +8,7 @@ class UserModel {
 
   UserModel({
     required this.name,
-    required this.phone,
+    required this.phone_number,
     required this.password,
     required this.emergencyContact,
     required this.email,

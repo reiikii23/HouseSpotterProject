@@ -16,7 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://10.0.2.2:8000';
 
   Future<void> login() async {
     final response = await http.post(

@@ -1,15 +1,18 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-
+from .routers import user
 from . import models, schemas, crud, auth
 from .database import SessionLocal, engine, Base
 from .routers import user 
 
+
 Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+app.include_router(user.router)
 
 def get_db():
     db = SessionLocal()
@@ -27,11 +30,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     hashed_password = auth.get_password_hash(user.password)
 
     new_user = models.User(
-        username=user.email,
         email=user.email,
-        password=password,
+        hashed_password=hashed_password,
         full_name=user.full_name,
-        phone=user.phone,
+        phone_number=user.phone_number,
         address=user.address,
     )
 
@@ -49,14 +51,14 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     if not db_user:
         raise HTTPException(status_code=400, detail="Invalid email or password")
     
-    if not pwd_context.verify(user.password, db_user.password):
+    if not pwd_context.verify(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
     return {
         "id": db_user.id,
         "email": db_user.email,
         "full_name": db_user.full_name,
-        "phone": db_user.phone,
+        "phone_number": db_user.phone_number,
         "address": db_user.address
     }
 

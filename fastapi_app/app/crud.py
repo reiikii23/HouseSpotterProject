@@ -8,12 +8,12 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_pw = pwd_context.hash(user.password)
+    hashed_pw = pwd_context.hash(user.hashed_password)
     db_user = models.User(
         email=user.email,
-        password=hashed_pw,
+        hashed_password=hashed_pw,
         full_name=user.full_name,
-        phone=user.phone,
+        phone_number=user.phone_number,
         address=user.address
     )
     db.add(db_user)

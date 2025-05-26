@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'listing_screen2.dart'; // Import your amenities screen
+import 'listing_screen2.dart';
 
 class SelectPlaceTypeScreen extends StatefulWidget {
+  final Function(Map<String, dynamic>) onAddListing;
+
+  const SelectPlaceTypeScreen({Key? key, required this.onAddListing}) : super(key: key);
+
   @override
   _SelectPlaceTypeScreenState createState() => _SelectPlaceTypeScreenState();
 }
@@ -27,14 +31,10 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Text(
-                "Which of these best describes your place?",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text("Which of these best describes your place?",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
 
-              // Title input
               TextField(
                 controller: titleController,
                 decoration: InputDecoration(
@@ -45,7 +45,6 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Description input
               TextField(
                 controller: descriptionController,
                 maxLines: 3,
@@ -57,7 +56,6 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Place type grid
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -67,9 +65,7 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
                   children: types.map((type) {
                     final isSelected = selectedType == type['label'];
                     return GestureDetector(
-                      onTap: () {
-                        setState(() => selectedType = type['label']);
-                      },
+                      onTap: () => setState(() => selectedType = type['label']),
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -94,19 +90,12 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
                 ),
               ),
 
-              // Navigation buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      "Back",
-                      style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+                    child: Text("Back", style: TextStyle(color: Colors.black, decoration: TextDecoration.underline)),
                   ),
                   ElevatedButton(
                     onPressed: selectedType != null &&
@@ -120,6 +109,7 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
                                   placeType: selectedType!,
                                   title: titleController.text,
                                   description: descriptionController.text,
+                                  onAddListing: widget.onAddListing,
                                 ),
                               ),
                             );
@@ -127,11 +117,8 @@ class _SelectPlaceTypeScreenState extends State<SelectPlaceTypeScreen> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                     ),
                     child: Text("Next", style: TextStyle(color: Colors.white)),
                   ),

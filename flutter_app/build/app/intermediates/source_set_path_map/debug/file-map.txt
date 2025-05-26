@@ -41,8 +41,9 @@ com.johnverz.app1.app-resValues-39 D:\Users\Oshwald\Documents\seloriosoftdes\sof
 com.johnverz.app1.app-packageDebugResources-40 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\app\intermediates\incremental\debug\packageDebugResources\merged.dir
 com.johnverz.app1.app-packageDebugResources-41 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\app\intermediates\incremental\debug\packageDebugResources\stripped.dir
 com.johnverz.app1.app-merged_res-42 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\app\intermediates\merged_res\debug
-com.johnverz.app1.app-packaged_res-43 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\flutter_plugin_android_lifecycle\intermediates\packaged_res\debug
-com.johnverz.app1.app-packaged_res-44 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\flutter_secure_storage\intermediates\packaged_res\debug
-com.johnverz.app1.app-packaged_res-45 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\image_picker_android\intermediates\packaged_res\debug
-com.johnverz.app1.app-packaged_res-46 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\path_provider_android\intermediates\packaged_res\debug
-com.johnverz.app1.app-packaged_res-47 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\shared_preferences_android\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-43 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\file_selector_android\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-44 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\flutter_plugin_android_lifecycle\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-45 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\flutter_secure_storage\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-46 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\image_picker_android\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-47 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\path_provider_android\intermediates\packaged_res\debug
+com.johnverz.app1.app-packaged_res-48 D:\Users\Oshwald\Documents\seloriosoftdes\software-design-lessons\flutter_app\build\shared_preferences_android\intermediates\packaged_res\debug

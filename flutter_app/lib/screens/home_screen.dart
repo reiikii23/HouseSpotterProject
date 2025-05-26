@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'menu_screen.dart';
 import 'listing_screen1.dart';
+import 'menu_screen.dart';
 import 'property_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,11 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   };
 
+  final List<Map<String, dynamic>> userListings = [];
   final MapController _mapController = MapController();
   String selectedCategory = 'Transient';
   int _selectedIndex = 0;
-  bool hasListings = false;
   String searchText = '';
+  String inboxFilter = 'All';
 
   void _onNavBarTapped(int index) {
     setState(() {
@@ -66,131 +68,87 @@ class _HomeScreenState extends State<HomeScreen> {
     return allResults;
   }
 
-  Widget buildHomeContent() {
-    final filteredListings = _getFilteredListings();
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                searchText = value;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: 'Search places',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  Widget buildListingsContent() {
+    if (userListings.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("No Listings", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SelectPlaceTypeScreen(
+                      onAddListing: (listingData) {
+                        setState(() {
+                          userListings.add(listingData);
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text(
+                "Add a listing",
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  fontSize: 16,
+                  color: Colors.blue,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: categoryListings.keys.map((category) {
-              final isSelected = selectedCategory == category;
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ChoiceChip(
-                  label: Text(category),
-                  selected: isSelected,
-                  onSelected: (_) {
-                    setState(() {
-                      selectedCategory = category;
-                      searchText = '';
-                    });
-                  },
-                  selectedColor: Colors.black,
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black,
+      );
+    } else {
+      return ListView.builder(
+        itemCount: userListings.length,
+        itemBuilder: (context, index) {
+          final listing = userListings[index];
+          return Card(
+            margin: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (listing['image'] != null && listing['image'] is File)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    child: Image.file(
+                      listing['image'],
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        listing['title'] ?? 'No Title',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(listing['description'] ?? ''),
+                      const SizedBox(height: 8),
+                      Text('₱${listing['price']} per night'),
+                      Text('Type: ${listing['placeType']}'),
+                      Text('Amenities: ${listing['amenities'].join(', ')}'),
+                    ],
                   ),
                 ),
-              );
-            }).toList(),
-          ),
-        ),
-        Expanded(
-          child: filteredListings.isEmpty
-              ? const Center(child: Text("No listings found."))
-              : ListView.builder(
-                  itemCount: filteredListings.length,
-                  itemBuilder: (_, index) {
-                    final listing = filteredListings[index];
-                    final category = listing['category'] ?? selectedCategory;
-
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ListingDetailScreen(
-                              imagePath: listing['image']!,
-                              title: category,
-                              price: listing['price']!,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Stack(
-                        alignment: Alignment.bottomLeft,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                listing['image']!,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 16,
-                            bottom: 24,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    category,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [Shadow(color: Colors.black, blurRadius: 4)],
-                                    ),
-                                  ),
-                                  Text(
-                                    listing['price']!,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      shadows: [Shadow(color: Colors.black, blurRadius: 4)],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
-    );
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   Widget buildMapContent() {
@@ -200,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              center: LatLng(14.5995, 120.9842),
+              center: LatLng(14.5995, 120.9842), // Manila
               zoom: 13.0,
             ),
             children: [
@@ -245,131 +203,207 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
   Widget buildInboxContent() {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Chip(label: Text("All")),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Chip(label: Text("Host Chats")),
-                ),
-              ],
-            ),
-            const Spacer(),
-            const Center(
-              child: Column(
-                children: [
-                  Text(
-                    "You don’t have any messages",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "When you receive a new message, it will appear here.",
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+  final TextEditingController _supportController = TextEditingController();
+
+  return Stack(
+    children: [
+      Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ChoiceChip(
+                label: Text("All"),
+                selected: inboxFilter == 'All',
+                onSelected: (_) => setState(() => inboxFilter = 'All'),
               ),
-            ),
-            const Spacer(),
-          ],
-        ),
-        Positioned(
-          bottom: 20,
-          right: 20,
-          child: FloatingActionButton(
-            backgroundColor: Colors.black,
-            child: const Icon(Icons.support_agent, color: Colors.white),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              SizedBox(width: 10),
+              ChoiceChip(
+                label: Text("Host Chats"),
+                selected: inboxFilter == 'Host Chats',
+                onSelected: (_) => setState(() => inboxFilter = 'Host Chats'),
+              ),
+              SizedBox(width: 10),
+              ChoiceChip(
+                label: Text("Support"),
+                selected: inboxFilter == 'Support',
+                onSelected: (_) => setState(() => inboxFilter = 'Support'),
+              ),
+            ],
+          ),
+          const Spacer(),
+          const Text("You don’t have any messages", style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          const Text("When you receive a new message, it will appear here."),
+          const Spacer(),
+        ],
+      ),
+      Positioned(
+        bottom: 20,
+        right: 20,
+        child: FloatingActionButton(
+          backgroundColor: Colors.black,
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 24,
                 ),
-                builder: (context) => Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                    left: 16,
-                    right: 16,
-                    top: 24,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text("Contact Support", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      TextField(
-                        maxLines: 5,
-                        decoration: InputDecoration(
-                          hintText: "Write your message here...",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Contact Support", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _supportController,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: "Describe your issue...",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Support message sent! The support team will contact you")),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: const Text("Send", style: TextStyle(color: Colors.white)),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("The support team will let you know soon.")),
+                        );
+                        _supportController.clear();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                      child: const Text("Send", style: TextStyle(color: Colors.white)),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+          child: const Icon(Icons.support_agent, color: Colors.white),
+        ),
+      ),
+    ],
+  );
+}
+
+
+  Widget buildHomeContent() {
+    final filteredListings = _getFilteredListings();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: TextField(
+            onChanged: (value) => setState(() => searchText = value),
+            decoration: InputDecoration(
+              hintText: 'Search places',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: categoryListings.keys.map((category) {
+              final isSelected = selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(category),
+                  selected: isSelected,
+                  onSelected: (_) => setState(() {
+                    selectedCategory = category;
+                    searchText = '';
+                  }),
+                  selectedColor: Colors.black,
+                  labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
                 ),
               );
-            },
+            }).toList(),
           ),
+        ),
+        Expanded(
+          child: filteredListings.isEmpty
+              ? const Center(child: Text("No listings found."))
+              : ListView.builder(
+                  itemCount: filteredListings.length,
+                  itemBuilder: (_, index) {
+                    final listing = filteredListings[index];
+                    final category = listing['category'] ?? selectedCategory;
+                    return GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ListingDetailScreen(
+                            imagePath: listing['image']!,
+                            title: category,
+                            price: listing['price']!,
+                          ),
+                        ),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.bottomLeft,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                listing['image']!,
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 16,
+                            bottom: 24,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    category,
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    listing['price']!,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
         ),
       ],
     );
-  }
-
-  Widget buildListingsContent() {
-    if (!hasListings) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("No Listings", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SelectPlaceTypeScreen()),
-                );
-              },
-              child: const Text(
-                "Add a listing",
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  fontSize: 16,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return const Center(child: Text("Your listings will appear here."));
-    }
   }
 
   @override
@@ -381,10 +415,8 @@ class _HomeScreenState extends State<HomeScreen> {
       content = buildMapContent();
     } else if (_selectedIndex == 2) {
       content = buildInboxContent();
-    } else if (_selectedIndex == 3) {
-      content = buildListingsContent();
     } else {
-      content = const Center(child: Text("Invalid tab"));
+      content = buildListingsContent();
     }
 
     return Scaffold(

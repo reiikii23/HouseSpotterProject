@@ -6,14 +6,14 @@ class UserCreate(BaseModel):
     email: str
     password: str
     full_name: str
-    phone: str
+    phone_number: str
     address: str
 
 class UserResponse(BaseModel):
     id: int
     email: str
     full_name: str
-    phone: str
+    phone_number: str
     address: str
 
     model_config = {
@@ -39,7 +39,7 @@ class UserOut(BaseModel):
 class UserUpdate(BaseModel):
     name: Optional[str]
     email: Optional[str]
-    phone: Optional[str]
+    phone_number: Optional[str]
     emergency: Optional[str]
     address: Optional[str]        
 

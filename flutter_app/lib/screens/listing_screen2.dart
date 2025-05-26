@@ -5,11 +5,13 @@ class SelectAmenitiesScreen extends StatefulWidget {
   final String placeType;
   final String title;
   final String description;
+  final Function(Map<String, dynamic>) onAddListing;
 
   const SelectAmenitiesScreen({
     required this.placeType,
     required this.title,
     required this.description,
+    required this.onAddListing,
     Key? key,
   }) : super(key: key);
 
@@ -48,18 +50,13 @@ class _SelectAmenitiesScreenState extends State<SelectAmenitiesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Tell guests what your place has to offer",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "You can add more amenities later.",
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              const SizedBox(height: 30),
+              Text("Tell guests what your place has to offer",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              SizedBox(height: 4),
+              Text("You can add more amenities later.",
+                  style: TextStyle(fontSize: 14, color: Colors.black54)),
+              SizedBox(height: 30),
 
-              // Amenities grid
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -83,7 +80,7 @@ class _SelectAmenitiesScreenState extends State<SelectAmenitiesScreen> {
                         child: Row(
                           children: [
                             Icon(item['icon'], color: Colors.black),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Text(item['label']),
                           ],
                         ),
@@ -93,19 +90,12 @@ class _SelectAmenitiesScreenState extends State<SelectAmenitiesScreen> {
                 ),
               ),
 
-              // Navigation buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      "Back",
-                      style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+                    child: Text("Back", style: TextStyle(color: Colors.black, decoration: TextDecoration.underline)),
                   ),
                   ElevatedButton(
                     onPressed: selectedAmenities.isNotEmpty
@@ -114,10 +104,11 @@ class _SelectAmenitiesScreenState extends State<SelectAmenitiesScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => SetPriceScreen(
-                                  placeType: widget.placeType,
                                   title: widget.title,
                                   description: widget.description,
+                                  placeType: widget.placeType,
                                   amenities: selectedAmenities.toList(),
+                                  onAddListing: widget.onAddListing,
                                 ),
                               ),
                             );
@@ -125,11 +116,8 @@ class _SelectAmenitiesScreenState extends State<SelectAmenitiesScreen> {
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                     ),
                     child: Text("Next", style: TextStyle(color: Colors.white)),
                   ),
